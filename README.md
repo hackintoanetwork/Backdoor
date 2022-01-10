@@ -1,4 +1,5 @@
 # ReverseShell Python
+<b>Target OS: Windows 10 ~ 11</b></br>
 <h1>Install & run</h1>
 <br><b>1. git clone https://github.com/hackintoanetwork/ReverseShell-py.git</b></br>
 <br><b>2. cd ReverseShell-py</b></br>
