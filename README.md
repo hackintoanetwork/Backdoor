@@ -1,4 +1,4 @@
-# ReverseShell Python
+# Python Backdoor 
 <b>Target OS: Windows 10 ~ 11</b></br>
 <br><b>If you want to make the Python script into an exe executable file, run the following command on Windows</b></br>
 <br><b> >> pyinstaller.exe --uac-admin --onefile -w --clean payload.py</b>
