@@ -3,7 +3,7 @@
 <br><b>If you want to make the Python script into an exe executable file, run the following command on Windows</b></br>
 <br><b> >> pyinstaller.exe --uac-admin --onefile -w --clean payload.py</b>
 <h1>Install & run</h1>
-<br><b>1. git clone https://github.com/hackintoanetwork/ReverseShell-py.git</b></br>
+<br><b>1. git clone https://github.com/hackintoanetwork/Backdoor.git</b></br>
 <br><b>2. cd ReverseShell-py</b></br>
 <br><b>3. python3 generator.py</b></br>
 
